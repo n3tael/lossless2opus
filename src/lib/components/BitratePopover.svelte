@@ -16,8 +16,7 @@
 			>
 				<h4 class="font-bold">Bitrate</h4>
 				<p>
-					Bitrate stands for maximum kilobits (information) per second. For music, it's recommended
-					to use 128 kbps for quality & size.
+					Bitrate refers to the number of kilobits of data per second. The higher the number, the larger the file and the better the quality. For music, 128 kbps is recommended to achive a balance between audio quality and file size, as the difference is not very noticeable after 128 kbps.
 				</p>
 				<p class="text-xs text-muted">Don't try the Bitcrush option. You have been warned.</p>
 			</div>
