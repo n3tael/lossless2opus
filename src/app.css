@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+@import '@fontsource/instrument-sans';
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--default-font-family: 'Instrument Sans', system-ui, Helvetica, Arial, sans-serif;
+
+	--color-gradient-from: var(--color-neutral-100);
+	--color-gradient-to: var(--color-neutral-50);
+	--color-background: var(--color-neutral-50);
+	--color-foreground: var(--color-neutral-950);
+	--color-secondary: var(--color-neutral-50);
+	--color-secondary-inverted: var(--color-neutral-900);
+	--color-ghost: var(--color-neutral-200);
+	--color-border: var(--color-neutral-200);
+	--color-muted: var(--color-neutral-400);
+	--color-link: var(--color-blue-600);
+	--color-link-hover: var(--color-blue-700);
+}
+
+@layer base {
+	.dark {
+		--color-gradient-from: var(--color-neutral-900);
+		--color-gradient-to: var(--color-neutral-950);
+		--color-background: var(--color-neutral-950);
+		--color-foreground: var(--color-neutral-100);
+		--color-secondary: var(--color-neutral-900);
+		--color-secondary-inverted: var(--color-neutral-100);
+		--color-ghost: var(--color-neutral-800);
+		--color-border: var(--color-neutral-800);
+		--color-muted: var(--color-neutral-600);
+	}
+
+	html {
+		@apply bg-background text-foreground from-gradient-from to-gradient-to h-screen w-full bg-gradient-to-b bg-repeat-x;
+	}
+
+	body {
+		@apply mx-4 max-w-3xl md:mx-auto;
+	}
+
+	a {
+		@apply text-link hover:text-link-hover decoration-0 transition-colors;
+	}
+
+	button {
+		@apply rounded-lg shadow-sm transition-colors hover:cursor-pointer disabled:hover:cursor-not-allowed;
+
+		&.ghost {
+			@apply hover:bg-ghost p-1 shadow-none disabled:opacity-30;
+		}
+
+		&.primary {
+			@apply disabled:bg-foreground/50 dark:disabled:bg-foreground/50 bg-foreground not-disabled:hover:bg-secondary-inverted text-background px-4 py-1.5;
+		}
+
+		&.secondary {
+			@apply bg-secondary border-border not-disabled:hover:bg-border disabled:text-muted disabled:border-secondary border-1 px-4 py-1.5;
+		}
+	}
+}
+
+@layer components {
+	[role='separator'] {
+		@apply bg-border my-4 shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-[2px];
+	}
+}
