@@ -4,7 +4,7 @@
 	import FileSelect from '$lib/components/FileSelect.svelte';
 	import FileItem from '$lib/components/FileItem.svelte';
 	import BitrateSelect from '$lib/components/BitrateSelect.svelte';
-	import BitrateTooltip from '$lib/components/BitrateTooltip.svelte';
+	import BitratePopover from '$lib/components/BitratePopover.svelte';
 	import { QueueItemStatus, type QueueItem } from '$lib/types';
 
 	let queue: QueueItem[] = $state([]);
@@ -102,7 +102,7 @@
 <div class="flex flex-col sm:flex-row justify-between gap-2 my-2">
 	<div class="flex gap-2 items-center">
 		<BitrateSelect bind:value={selected_bitrate} />
-		<BitrateTooltip />
+		<BitratePopover />
 	</div>
 
 	<div class="flex gap-2 ml-auto">
