@@ -22,7 +22,7 @@
 		}
 	}
 
-	function onDrop(event: DragEvent) {
+	function ondrop(event: DragEvent) {
 		event.preventDefault();
 
 		isDropping = false;
@@ -42,16 +42,11 @@
 		isDropping = true;
 	}
 
-	function ondragleave(e: Event) {
+	function ondragexit(e: Event) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		isDropping = false;
-	}
-
-	function preventDefaults(e: Event) {
-		e.preventDefault();
-		e.stopPropagation();
 	}
 </script>
 
@@ -64,7 +59,7 @@
 	onchange={onFileChange}
 />
 
-<svelte:window ondrop={onDrop} {ondragover} {ondragleave} />
+<svelte:window {ondrop} {ondragover} {ondragexit} />
 
 {#if isDropping}
 	<div
