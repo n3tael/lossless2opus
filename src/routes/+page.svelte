@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Tween } from 'svelte/motion';
+	import { QueueItemStatus, WorkerDataType, type QueueItem, type WorkerData } from '$lib/types';
+	import Worker from '$lib/workers/convert.js?worker';
 	import FileSelect from '$lib/components/FileSelect.svelte';
 	import FileItem from '$lib/components/FileItem.svelte';
 	import BitrateSelect from '$lib/components/BitrateSelect.svelte';
 	import BitratePopover from '$lib/components/BitratePopover.svelte';
-	import { QueueItemStatus, type QueueItem } from '$lib/types';
 
 	let queue: QueueItem[] = $state([]);
 	let queue_processing = $derived(
@@ -18,37 +19,15 @@
 
 		for (const task of queue) {
 			if (task.status !== QueueItemStatus.WAITING) continue;
-
 			task.status = QueueItemStatus.PROCESSING;
 
-			const worker = new Worker(new URL('$lib/workers/convert.worker.js', import.meta.url), {
-				type: 'module'
-			});
-
+			const worker = new Worker();
 			worker.onmessage = async (e) => {
-				const {
-					type,
-					value,
-					data
-				}: { type: string; value: string; data: ArrayBuffer; fileName: string } = e.data;
+				const { type, data }: WorkerData = e.data;
 
 				switch (type) {
-					case 'error':
-						task.status = QueueItemStatus.ERROR;
-						console.error(value);
-						worker.terminate();
-						break;
-
-					case 'progress':
-						task.progress.target = parseInt(value);
-						break;
-
-					case 'debug':
-						console.debug(value);
-						break;
-
-					case 'done':
-						await task.progress.set(100);
+					case WorkerDataType.DONE:
+						await task.progress.set(100, { duration: 100 });
 
 						const blob = new Blob([data], { type: 'audio/opus' });
 						task.output_file = {
@@ -57,18 +36,32 @@
 						};
 
 						task.status = QueueItemStatus.DONE;
+
 						worker.terminate();
+						break;
+					case WorkerDataType.ERROR:
+						task.status = QueueItemStatus.ERROR;
+
+						console.error(data);
+						worker.terminate();
+						break;
+					case WorkerDataType.PROGRESS:
+						task.progress.target = data;
 						break;
 				}
 			};
 
-			worker.postMessage({ input_file: task.input_file, bitrate: parseInt(selected_bitrate) });
+			const input_bytes = await task.input_file.bytes()
+
+			worker.postMessage({
+				input_bytes: input_bytes,
+				bitrate: parseInt(selected_bitrate)
+			}, [input_bytes.buffer]);
 		}
 	}
 
 	function onImport(file: File) {
 		queue.push({
-			uuid: crypto.randomUUID(),
 			status: QueueItemStatus.WAITING,
 			input_file: file,
 			output_file: null,
@@ -81,12 +74,14 @@
 	}
 
 	function delete_from_queue(index: number) {
+		if (queue[index].output_file) URL.revokeObjectURL(queue[index].output_file.url);
+
 		queue.splice(index, 1);
 	}
 </script>
 
 <div class="flex flex-col my-2">
-	{#each queue as item, i (item.uuid)}
+	{#each queue as item, i (i)}
 		<FileItem
 			{item}
 			button_disabled={queue_processing}

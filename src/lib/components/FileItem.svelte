@@ -27,11 +27,11 @@
 
 	<div class="flex items-center overflow-hidden mr-auto">
 		<span class="whitespace-nowrap overflow-hidden text-ellipsis mr-2">{item.input_file.name}</span>
-		
+
 		{#if item.status === QueueItemStatus.PROCESSING}
-		<span class="text-muted text-sm" in:fade out:slide={{ axis: 'x' }}>
-			{Math.round(item.progress.current)}%
-		</span>
+			<span class="text-muted text-sm" in:fade out:slide={{ axis: 'x' }}>
+				{Math.round(item.progress.current)}%
+			</span>
 		{/if}
 
 		{#if item.status === QueueItemStatus.DONE}
@@ -48,13 +48,15 @@
 	<span class="text-muted mx-2 shrink-0 text-xs">{filesize(item.input_file.size)}</span>
 
 	{#if item.output_file}
-		<button onclick={download} class="ghost">
-			<Download size="16"/>
+		<button onclick={download} class="ghost" transition:fade>
+			<Download size="16" />
 		</button>
 	{/if}
 
 	{#if !button_disabled}
-		<button onclick={on_item_remove} transition:slide={{ axis: 'x' }} class="ghost shrink-0"><X size="16" /></button>
+		<button onclick={on_item_remove} transition:slide={{ axis: 'x' }} class="ghost shrink-0"
+			><X size="16" /></button
+		>
 	{/if}
 </div>
 
@@ -71,14 +73,14 @@
 
 	progress,
 	::-webkit-progress-bar {
-		@apply absolute left-0 right-0 w-full h-full bg-transparent z-0;
+		@apply absolute right-0 left-0 z-0 h-full w-full bg-transparent;
 		-webkit-appearance: none;
 	}
 
 	::-moz-progress-bar {
 		@apply bg-foreground/10;
 	}
-	
+
 	::-webkit-progress-value {
 		@apply bg-foreground/10;
 	}

@@ -2,13 +2,12 @@
 	import { Separator } from 'bits-ui';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import Worker from '$lib/workers/version.js?worker';
 
 	let opus_version = $state<string | null>(null);
 
 	onMount(async () => {
-		const worker = new Worker(new URL('$lib/workers/version.worker.js', import.meta.url), {
-			type: 'module'
-		});
+		const worker = new Worker();
 
 		worker.onmessage = (e) => {
 			const { version }: { version: string } = e.data;
@@ -25,7 +24,7 @@
 <footer>
 	<Separator.Root />
 	<a href="https://github.com/n3tael/lossless2opus">source code @ github</a>
-	<p>{__APP_VERSION__.name} v{__APP_VERSION__.version}-{__APP_VERSION__.commit.slice(0,6)}</p>
+	<p>{__APP_VERSION__.name} v{__APP_VERSION__.version}-{__APP_VERSION__.commit.slice(0, 6)}</p>
 	{#if opus_version}
 		<p in:fade>{opus_version}</p>
 	{/if}
