@@ -77,6 +77,6 @@
 	transition:slide
 >
 	<Plus />
-	<h2 class="text-xl font-medium">Select files</h2>
+	<h2 class="text-xl font-semibold">Select files</h2>
 	<p class="text-muted">.wav or .flac</p>
 </button>

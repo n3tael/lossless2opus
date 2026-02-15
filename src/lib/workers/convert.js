@@ -25,15 +25,18 @@ self.onmessage = async (e) => {
 				return;
 			}
 
-			const result = opusenc.FS.readFile("out");
+			const result = opusenc.FS.readFile('out');
 
 			opusenc.FS.unlink('in');
 			opusenc.FS.unlink('out');
-			
-			self.postMessage({
-				type: 0,
-				data: result
-			}, [result.buffer]);
+
+			self.postMessage(
+				{
+					type: 0,
+					data: result
+				},
+				[result.buffer]
+			);
 		}
 	});
 

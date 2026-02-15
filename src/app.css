@@ -1,5 +1,7 @@
 @import 'tailwindcss';
-@import '@fontsource/instrument-sans';
+@import '@fontsource/instrument-sans/400';
+@import '@fontsource/instrument-sans/600';
+@import '@fontsource/instrument-sans/700';
 
 @plugin "tailwindcss-animate";
 

@@ -51,12 +51,15 @@
 				}
 			};
 
-			const input_bytes = await task.input_file.bytes()
+			const input_bytes = await task.input_file.bytes();
 
-			worker.postMessage({
-				input_bytes: input_bytes,
-				bitrate: parseInt(selected_bitrate)
-			}, [input_bytes.buffer]);
+			worker.postMessage(
+				{
+					input_bytes: input_bytes,
+					bitrate: parseInt(selected_bitrate)
+				},
+				[input_bytes.buffer]
+			);
 		}
 	}
 
@@ -80,7 +83,7 @@
 	}
 </script>
 
-<div class="flex flex-col my-2">
+<div class="flex flex-col pb-1">
 	{#each queue as item, i (i)}
 		<FileItem
 			{item}
