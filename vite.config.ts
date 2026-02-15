@@ -4,14 +4,19 @@ import { defineConfig } from 'vite';
 import pkg from './package.json';
 import { readFile } from 'node:fs/promises';
 
-const viteServerConfig = () => ({
-	name: 'configure-server',
-	configureServer(server) {
-		server.middlewares.use((req, res, next) => {
-			res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-			res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-			next();
-		});
+function crossOriginIsolationMiddleware(_, res, next) {
+	res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+	res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+	next();
+}
+
+const crossOriginIsolation = () => ({
+	name: 'cross-origin-isolation',
+	configureServer: (server) => {
+		server.middlewares.use(crossOriginIsolationMiddleware);
+	},
+	configurePreviewServer: (server) => {
+		server.middlewares.use(crossOriginIsolationMiddleware);
 	}
 });
 
@@ -24,7 +29,7 @@ const getCommit = async () => {
 };
 
 export default defineConfig({
-	plugins: [viteServerConfig(), tailwindcss(), sveltekit()],
+	plugins: [crossOriginIsolation(), tailwindcss(), sveltekit()],
 	build: {
 		sourcemap: true
 	},
