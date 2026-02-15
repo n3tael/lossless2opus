@@ -1,7 +1,8 @@
 <script lang="ts">
+	import FLAC from '$lib/icons/FLAC.svelte';
 	import { QueueItemStatus, type QueueItem } from '$lib/types';
 	import { filesize } from 'filesize';
-	import { Check, CircleX, Download, Music, X } from 'lucide-svelte';
+	import { AudioLines, Check, CircleX, Download, Music, X } from 'lucide-svelte';
 	import { fade, slide } from 'svelte/transition';
 
 	let {
@@ -23,7 +24,11 @@
 </script>
 
 <div class="file" transition:slide>
-	<Music class="m-1 mr-2 shrink-0" size="16" />
+	{#if item.input_file.type === 'audio/x-flac'}
+		<FLAC class="icon" size={16} />
+	{:else if item.input_file.type === 'audio/wav'}
+		<AudioLines class="icon" size={16} />
+	{/if}
 
 	<div class="flex items-center overflow-hidden mr-auto">
 		<span class="whitespace-nowrap overflow-hidden text-ellipsis mr-2">{item.input_file.name}</span>
@@ -63,8 +68,12 @@
 <style lang="postcss">
 	@reference "$styles";
 
-	.file {
+	.file :global {
 		@apply border-border bg-secondary relative my-1 flex items-center overflow-clip rounded-xl border p-2 shadow-sm;
+
+		.icon {
+			@apply text-muted m-1 mr-2 shrink-0;
+		}
 
 		:not(progress) {
 			@apply z-5;
