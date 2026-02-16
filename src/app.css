@@ -18,6 +18,7 @@
 	--color-secondary-inverted: var(--color-neutral-900);
 	--color-ghost: var(--color-neutral-200);
 	--color-border: var(--color-neutral-200);
+	--color-border-light: var(--color-neutral-200);
 	--color-muted: var(--color-neutral-400);
 	--color-link: var(--color-blue-600);
 	--color-link-hover: var(--color-blue-700);
@@ -33,11 +34,12 @@
 		--color-secondary-inverted: var(--color-neutral-100);
 		--color-ghost: var(--color-neutral-800);
 		--color-border: var(--color-neutral-800);
+		--color-border-light: var(--color-neutral-200);
 		--color-muted: var(--color-neutral-500);
 	}
 
 	html {
-		@apply bg-background text-foreground from-gradient-from to-gradient-to h-screen w-full bg-gradient-to-b bg-repeat-x;
+		@apply bg-background text-foreground from-gradient-from to-gradient-to h-screen w-full bg-linear-to-b bg-repeat-x;
 	}
 
 	body {
@@ -51,6 +53,10 @@
 	button {
 		@apply rounded-lg shadow-sm transition-colors hover:cursor-pointer disabled:hover:cursor-not-allowed;
 
+		&.icon {
+			@apply p-3!;
+		}
+
 		&.ghost {
 			@apply hover:bg-ghost p-1 shadow-none disabled:opacity-30;
 		}
@@ -60,7 +66,7 @@
 		}
 
 		&.secondary {
-			@apply bg-secondary border-border not-disabled:hover:bg-border disabled:text-muted disabled:border-secondary border-1 px-4 py-1.5;
+			@apply bg-secondary border-border not-disabled:hover:bg-border disabled:text-muted disabled:border-secondary border px-4 py-1.5;
 		}
 	}
 }

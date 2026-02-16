@@ -1,32 +1,36 @@
 <script lang="ts">
-	import { Select } from 'bits-ui';
-	import { AudioWaveform, Check, ChevronsUpDown } from 'lucide-svelte';
+	import { Select, type WithoutChildren } from 'bits-ui';
+	import { Check, ChevronsUpDown } from 'lucide-svelte';
+	import type { Snippet } from 'svelte';
 
-	const options = [
-		{ value: '160', label: '160 kbps (best quality, big size)' },
-		{ value: '128', label: '128 kbps (good quality, medium size)' },
-		{ value: '64', label: '64 kbps (medium quality, small size)' },
-		{ value: '32', label: '32 kbps (low quality, smallest size)' },
-		{ value: '8', label: 'Bitcrush' }
-	];
+	type Props = WithoutChildren<Select.RootProps> & {
+		leadingIcon?: Snippet;
+		placeholder?: string;
+		items: { value: string; label: string; disabled?: boolean }[];
+		contentProps?: WithoutChildren<Select.ContentProps>;
+	};
 
-	let { value = $bindable() }: { value: string } = $props();
+	let {
+		value = $bindable(),
+		leadingIcon,
+		items,
+		contentProps,
+		placeholder,
+		...restProps
+	}: Props = $props();
 
-	const selectedLabel = $derived(value ? options.find((o) => o.value === value)?.label : 'Bitrate');
-
-	const isLastOption = $derived(
-		options.findLastIndex((o) => o.value === value) === options.length - 1
-	);
+	const selectedLabel = $derived(items.find((item) => item.value === value)?.label);
 </script>
 
-<Select.Root type="single" onValueChange={(v) => (value = v)} items={options}>
+<Select.Root bind:value={value as never} {...restProps}>
 	<Select.Trigger
-		class="h-10 rounded-lg border-border bg-secondary inline-flex w-full sm:w-80 touch-none select-none items-center border px-3 text-sm transition-colors"
+		class="h-10 rounded-lg border-border bg-secondary inline-flex w-full sm:w-80 touch-none select-none items-center border px-3 text-sm transition-colors overflow-hidden"
 		aria-label="Select bitrate"
 	>
-		<AudioWaveform class="text-muted mr-2" size="16" />
-		{value && !isLastOption ? `${value} kbps` : selectedLabel}
-		<ChevronsUpDown class="text-muted ml-auto" size="16" />
+		{@render leadingIcon?.()}
+		<p class="overflow-hidden whitespace-nowrap text-ellipsis">
+			{selectedLabel ? selectedLabel : placeholder}
+		</p>
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
@@ -37,14 +41,14 @@
 				<ChevronsUpDown size="12" />
 			</Select.ScrollUpButton>
 			<Select.Viewport class="p-1">
-				{#each options as option, i (i + option.value)}
+				{#each items as item, i (i + item.value)}
 					<Select.Item
 						class="rounded-md data-highlighted:bg-ghost outline-hidden data-disabled:opacity-50 flex w-full select-none items-center px-2 py-1 text-sm"
-						value={option.value}
-						label={option.label}
+						value={item.value}
+						label={item.label}
 					>
 						{#snippet children({ selected })}
-							{option.label}
+							{item.label}
 							{#if selected}
 								<div class="ml-auto">
 									<Check aria-label="Selected" size="16" />

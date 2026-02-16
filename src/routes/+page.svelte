@@ -1,24 +1,28 @@
 <script lang="ts">
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle, Settings } from 'lucide-svelte';
 	import { Tween } from 'svelte/motion';
 	import { QueueItemStatus, WorkerDataType, type QueueItem, type WorkerData } from '$lib/types';
 	import Worker from '$lib/workers/convert.js?worker';
 	import FileSelect from '$lib/components/FileSelect.svelte';
 	import FileItem from '$lib/components/FileItem.svelte';
-	import BitrateSelect from '$lib/components/BitrateSelect.svelte';
-	import BitratePopover from '$lib/components/BitratePopover.svelte';
+	import BitrateSelect from '$lib/components/bitrate/BitrateSelect.svelte';
+	import BitratePopover from '$lib/components/bitrate/BitratePopover.svelte';
+	import { maxWorkers } from '$lib/stores/max-workers';
+	import SettingsDialog from '$lib/components/settings/SettingsDialog.svelte';
+	import { bitrate } from '$lib/stores/bitrate';
 
 	let queue: QueueItem[] = $state([]);
 	let queue_processing = $derived(
-		queue.filter((q) => q.status === QueueItemStatus.PROCESSING).length > 0
+		queue.filter((q) => q.status === QueueItemStatus.PROCESSING).length
 	);
-	let selected_bitrate = $state('');
+	let queue_waiting = $derived(queue.filter((q) => q.status === QueueItemStatus.WAITING).length);
 
 	async function startQueue() {
-		if (selected_bitrate === '') selected_bitrate = '128';
+		if (!$bitrate) bitrate.set('128');
 
 		for (const task of queue) {
-			if (task.status !== QueueItemStatus.WAITING) continue;
+			if (task.status !== QueueItemStatus.WAITING || queue_processing >= $maxWorkers) continue;
+
 			task.status = QueueItemStatus.PROCESSING;
 
 			const worker = new Worker();
@@ -36,6 +40,7 @@
 						};
 
 						task.status = QueueItemStatus.DONE;
+						if (queue_waiting > 0) startQueue();
 
 						worker.terminate();
 						break;
@@ -56,7 +61,7 @@
 			worker.postMessage(
 				{
 					input_bytes: input_bytes,
-					bitrate: parseInt(selected_bitrate)
+					bitrate: parseInt($bitrate ?? "")
 				},
 				[input_bytes.buffer]
 			);
@@ -87,7 +92,7 @@
 	{#each queue as item, i (i)}
 		<FileItem
 			{item}
-			button_disabled={queue_processing}
+			button_disabled={queue_processing > 0}
 			on_item_remove={() => delete_from_queue(i)}
 		/>
 	{/each}
@@ -99,20 +104,30 @@
 
 <div class="flex flex-col sm:flex-row justify-between gap-2 my-2">
 	<div class="flex gap-2 items-center">
-		<BitrateSelect bind:value={selected_bitrate} />
+		<BitrateSelect />
 		<BitratePopover />
 	</div>
 
 	<div class="flex gap-2 ml-auto">
-		<button onclick={clearQueue} disabled={queue.length === 0 || queue_processing} class="secondary"
-			>Clear queue</button
+		<SettingsDialog>
+			{#snippet button()}
+				<button class="icon secondary">
+					<Settings size={16} />
+				</button>
+			{/snippet}
+		</SettingsDialog>
+
+		<button
+			onclick={clearQueue}
+			disabled={queue.length === 0 || queue_processing > 0}
+			class="secondary">Clear queue</button
 		>
 		<button
 			onclick={startQueue}
-			disabled={queue.length === 0 || queue_processing}
+			disabled={queue.length === 0 || queue_processing > 0}
 			class="primary flex gap-1 items-center"
 		>
-			{#if queue_processing}
+			{#if queue_processing > 0}
 				<LoaderCircle class="animate-spin" size="16" />
 			{/if}
 			<span>Convert</span>
