@@ -24,7 +24,7 @@
 <footer>
 	<Separator.Root />
 	<a href="https://github.com/n3tael/lossless2opus">source code @ github</a>
-	<p>{__APP_VERSION__.name} v{__APP_VERSION__.version}-{__APP_VERSION__.commit.slice(0, 6)}</p>
+	<p>{__APP_VERSION__.name} v{__APP_VERSION__.version}-{__APP_VERSION__.commit.slice(0, 7)}</p>
 	{#if opus_version}
 		<p in:fade>{opus_version}</p>
 	{/if}
