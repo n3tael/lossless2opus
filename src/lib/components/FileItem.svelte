@@ -24,7 +24,7 @@
 </script>
 
 <div class="file" transition:slide>
-	{#if item.input_file.type === 'audio/x-flac'}
+	{#if item.input_file.type === 'audio/x-flac' || item.input_file.type === 'audio/flac'}
 		<FLAC class="icon" size={16} />
 	{:else if item.input_file.type === 'audio/wav'}
 		<AudioLines class="icon" size={16} />
