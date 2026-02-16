@@ -5,6 +5,8 @@
 	import Slider from '../Slider.svelte';
 	import SettingsItem from './SettingsItem.svelte';
 	import { maxWorkers } from '$lib/stores/max-workers';
+	import Switch from '../Switch.svelte';
+	import { showPercentage } from '$lib/stores/show-percentage';
 
 	type Props = BDialog.RootProps & {
 		button: Snippet;
@@ -19,12 +21,13 @@
 	{/snippet}
 
 	{#snippet description()}
-		Manage your settings and preferences.
+		Manage your preferences.
 	{/snippet}
 
 	<SettingsItem
 		name="Threads"
 		description="Specifies the maximum number of parallel tasks based on your CPU cores"
+		oneLine={false}
 	>
 		<Slider
 			bind:value={$maxWorkers}
@@ -33,5 +36,11 @@
 			max={navigator.hardwareConcurrency}
 			step={1}
 		/>
+	</SettingsItem>
+	<SettingsItem
+		name="Show savings as a percentage"
+		description="Show 12 MB (-70%) instead of 40 MB → 12 MB"
+	>
+		<Switch bind:checked={$showPercentage} />
 	</SettingsItem>
 </Dialog>

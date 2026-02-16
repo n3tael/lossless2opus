@@ -57,7 +57,7 @@
 			worker.postMessage(
 				{
 					input_bytes: input_bytes,
-					bitrate: parseInt($bitrate ?? "")
+					bitrate: parseInt($bitrate ?? '')
 				},
 				[input_bytes.buffer]
 			);

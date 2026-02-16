@@ -9,6 +9,8 @@
 
 @theme {
 	--default-font-family: 'Instrument Sans', system-ui, Helvetica, Arial, sans-serif;
+	--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
+	--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
 
 	--color-gradient-from: var(--color-neutral-100);
 	--color-gradient-to: var(--color-neutral-50);

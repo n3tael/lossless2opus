@@ -1,8 +1,9 @@
 <script lang="ts">
 	import FLAC from '$lib/icons/FLAC.svelte';
+	import { showPercentage } from '$lib/stores/show-percentage';
 	import { QueueItemStatus, type QueueItem } from '$lib/types';
 	import { filesize } from 'filesize';
-	import { AudioLines, Check, CircleX, Download, Music, X } from 'lucide-svelte';
+	import { ArrowRight, AudioLines, Check, CircleX, Download, Music, X } from 'lucide-svelte';
 	import { fade, slide } from 'svelte/transition';
 
 	let {
@@ -45,9 +46,9 @@
 		{/if}
 
 		{#if item.status === QueueItemStatus.DONE}
-			<Check size="16" />
+			<Check size={16} class="shrink-0" />
 		{:else if item.status === QueueItemStatus.ERROR}
-			<CircleX size="16" />
+			<CircleX size={16} class="shrink-0" />
 		{/if}
 	</div>
 
@@ -55,9 +56,26 @@
 		<progress transition:fade value={item.progress.current} max="100"></progress>
 	{/if}
 
-	<span class="text-muted mx-2 shrink-0 text-xs">{filesize(item.input_file.size)}</span>
+	{#if $showPercentage}
+		<span class="text-muted mx-2 shrink-0 text-xs">
+			{filesize(item.output_file ? item.output_file.size : item.input_file.size)}
+			{#if item.output_file}
+				<span class="text-green-700"
+					>({Math.round(
+						((item.output_file.size - item.input_file.size) / item.input_file.size) * 100
+					)}%)</span
+				>
+			{/if}
+		</span>
+	{:else}
+		<span class="text-muted mx-2 shrink-0 text-xs">{filesize(item.input_file.size)}</span>
+	{/if}
 
 	{#if item.output_file}
+		{#if !$showPercentage}
+			<ArrowRight class="text-muted shrink-0" size={16} />
+			<span class="text-green-700 mx-2 shrink-0 text-xs">{filesize(item.output_file.size)}</span>
+		{/if}
 		<button onclick={download} class="ghost" transition:fade>
 			<Download size="16" />
 		</button>
