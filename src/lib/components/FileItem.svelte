@@ -12,14 +12,19 @@
 	}: { item: QueueItem; button_disabled: boolean; on_item_remove: () => void } = $props();
 
 	function download() {
+		const url = URL.createObjectURL(item.output_file!);
+
 		const a = document.createElement('a');
 		a.style.display = 'none';
-		a.download = item.output_file?.name ?? '';
-		a.href = item.output_file?.url ?? '#';
+
+		a.download = item.input_file.name.replace(/\.\w+$/, '.opus');
+		a.href = url;
 
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
+
+		URL.revokeObjectURL(url);
 	}
 </script>
 

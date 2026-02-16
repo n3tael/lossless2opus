@@ -33,13 +33,9 @@
 					case WorkerDataType.DONE:
 						await task.progress.set(100, { duration: 100 });
 
-						const blob = new Blob([data], { type: 'audio/opus' });
-						task.output_file = {
-							name: task.input_file.name.replace(/\.\w+$/, '.opus'),
-							url: URL.createObjectURL(blob)
-						};
-
 						task.status = QueueItemStatus.DONE;
+						task.output_file = new Blob([data], { type: 'audio/opus' });
+
 						if (queue_waiting > 0) startQueue();
 
 						worker.terminate();
@@ -72,7 +68,6 @@
 		queue.push({
 			status: QueueItemStatus.WAITING,
 			input_file: file,
-			output_file: null,
 			progress: new Tween(0, { delay: 0, duration: 1000 })
 		});
 	}
@@ -82,8 +77,6 @@
 	}
 
 	function delete_from_queue(index: number) {
-		if (queue[index].output_file) URL.revokeObjectURL(queue[index].output_file.url);
-
 		queue.splice(index, 1);
 	}
 </script>

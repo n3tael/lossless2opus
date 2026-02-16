@@ -3,10 +3,7 @@ import type { Tween } from 'svelte/motion';
 export type QueueItem = {
 	status: QueueItemStatus;
 	input_file: File;
-	output_file: {
-		name: string;
-		url: string;
-	} | null;
+	output_file?: Blob;
 	progress: Tween<number>;
 };
 
