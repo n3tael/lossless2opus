@@ -74,7 +74,6 @@
 <button
 	class="w-full flex gap-3 items-center p-3 border-2 border-dashed secondary shadow-none!"
 	onclick={() => inputElement.click()}
-	transition:slide
 >
 	<Plus />
 	<h2 class="text-xl font-semibold">Select files</h2>

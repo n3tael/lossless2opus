@@ -5,7 +5,7 @@
 	import { twMerge } from 'tailwind-merge';
 
 	type Props = Dialog.RootProps & {
-		button: Snippet;
+		trigger: Snippet<[Record<string, unknown>]>;
 		title: Snippet;
 		description: Snippet;
 		contentClass?: string;
@@ -15,7 +15,7 @@
 	let {
 		open = $bindable(false),
 		children,
-		button,
+		trigger,
 		contentClass,
 		contentProps,
 		title,
@@ -26,7 +26,9 @@
 
 <Dialog.Root bind:open {...restProps}>
 	<Dialog.Trigger>
-		{@render button()}
+		{#snippet child({ props })}
+			{@render trigger(props)}
+		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Portal>
 		<Dialog.Overlay

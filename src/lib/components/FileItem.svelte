@@ -2,6 +2,7 @@
 	import FLAC from '$lib/icons/FLAC.svelte';
 	import { showPercentage } from '$lib/stores/show-percentage';
 	import { QueueItemStatus, type QueueItem } from '$lib/types';
+	import { downloadObject } from '$lib/utils/file';
 	import { filesize } from 'filesize';
 	import { ArrowRight, AudioLines, Check, CircleX, Download, Music, X } from 'lucide-svelte';
 	import { fade, slide } from 'svelte/transition';
@@ -15,17 +16,7 @@
 	function download() {
 		const url = URL.createObjectURL(item.output_file!);
 
-		const a = document.createElement('a');
-		a.style.display = 'none';
-
-		a.download = item.input_file.name.replace(/\.\w+$/, '.opus');
-		a.href = url;
-
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-
-		URL.revokeObjectURL(url);
+		downloadObject(item.input_file.name.replace(/\.\w+$/, '.opus'), url);
 	}
 </script>
 

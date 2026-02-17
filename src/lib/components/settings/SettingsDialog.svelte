@@ -9,13 +9,17 @@
 	import { showPercentage } from '$lib/stores/show-percentage';
 
 	type Props = BDialog.RootProps & {
-		button: Snippet;
+		button: Snippet<[Record<string, unknown>]>;
 	};
 
 	let { open = $bindable(false), button, ...restProps }: Props = $props();
 </script>
 
-<Dialog bind:open {...restProps} {button} contentClass="flex flex-col gap-4">
+<Dialog bind:open {...restProps} contentClass="flex flex-col gap-4">
+	{#snippet trigger(props)}
+		{@render button(props)}
+	{/snippet}
+
 	{#snippet title()}
 		Settings
 	{/snippet}

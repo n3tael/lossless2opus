@@ -21,6 +21,7 @@
 	--color-ghost: var(--color-neutral-200);
 	--color-border: var(--color-neutral-200);
 	--color-border-light: var(--color-neutral-200);
+	--color-border-inverted: var(--color-neutral-800);
 	--color-muted: var(--color-neutral-400);
 	--color-link: var(--color-blue-600);
 	--color-link-hover: var(--color-blue-700);
@@ -37,6 +38,7 @@
 		--color-ghost: var(--color-neutral-800);
 		--color-border: var(--color-neutral-800);
 		--color-border-light: var(--color-neutral-200);
+		--color-border-inverted: var(--color-neutral-200);
 		--color-muted: var(--color-neutral-500);
 	}
 
@@ -64,7 +66,7 @@
 		}
 
 		&.primary {
-			@apply disabled:bg-foreground/50 dark:disabled:bg-foreground/50 bg-foreground not-disabled:hover:bg-secondary-inverted text-background px-4 py-1.5;
+			@apply disabled:bg-foreground/50 dark:disabled:bg-foreground/50 bg-foreground not-disabled:hover:bg-border-inverted text-background px-4 py-1.5;
 		}
 
 		&.secondary {
