@@ -27,9 +27,10 @@
 	let zipProcessing = $state(false);
 
 	$effect(() => {
-		window.onbeforeunload = (queueSizes[QueueItemStatus.PROCESSING] > 0 || queueSizes[QueueItemStatus.DONE] > 0
-			? () => 'Are you sure you want to quit?'
-			: null)
+		window.onbeforeunload =
+			queueSizes[QueueItemStatus.PROCESSING] > 0 || queueSizes[QueueItemStatus.DONE] > 0
+				? () => 'Are you sure you want to quit?'
+				: null;
 	});
 
 	async function startQueue() {

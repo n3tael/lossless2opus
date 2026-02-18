@@ -1,17 +1,43 @@
 <script lang="ts">
 	import { Plus } from 'lucide-svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
+	import * as zip from '@zip.js/zip.js';
 
-	const acceptFileTypes = ['audio/flac', 'audio/wav', 'audio/x-flac'];
+	const acceptFileTypes = [
+		'audio/flac',
+		'audio/wav',
+		'audio/x-flac',
+		'application/zip',
+		'application/x-zip-compressed'
+	];
 	let { onImport }: { onImport: (file: File) => void } = $props();
 
 	let isDropping = $state(false);
 	let files: File[] = $state([]);
 	let inputElement: HTMLInputElement;
 
-	function addFiles(inputFiles: FileList | File[]) {
+	async function addFiles(inputFiles: FileList | File[]) {
 		files = [...files, ...Array.from(inputFiles)];
 		for (const file of inputFiles) {
+			if (['application/zip', 'application/x-zip-compressed'].includes(file.type)) {
+				const entries = new zip.ZipReader(new zip.BlobReader(file)).getEntriesGenerator();
+
+				for await (const entry of entries) {
+					if (entry.directory) continue;
+					const mime_type = zip.getMimeType(entry.filename);
+
+					if (!acceptFileTypes.includes(mime_type)) continue;
+
+					onImport(
+						new File([await entry.getData(new zip.BlobWriter())], entry.filename, {
+							type: mime_type
+						})
+					);
+				}
+
+				continue;
+			}
+
 			onImport(file);
 		}
 	}
@@ -31,6 +57,7 @@
 			let dataTransferFiles = Array.from(event.dataTransfer.files).filter((f) =>
 				acceptFileTypes.includes(f.type)
 			);
+
 			addFiles(dataTransferFiles);
 		}
 	}
@@ -67,7 +94,7 @@
 		transition:fade={{ duration: 300 }}
 	>
 		<h1 class="text-3xl font-bold">Drop files here!</h1>
-		<p class="text-muted">Supported extensions: .wav, .flac</p>
+		<p class="text-muted">Supported extensions: .wav, .flac, .zip</p>
 	</div>
 {/if}
 
@@ -77,5 +104,5 @@
 >
 	<Plus />
 	<h2 class="text-xl font-semibold">Select files</h2>
-	<p class="text-muted">.wav or .flac</p>
+	<p class="text-muted">.wav, .flac or .zip</p>
 </button>
